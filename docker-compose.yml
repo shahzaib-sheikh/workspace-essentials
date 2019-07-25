@@ -1,0 +1,51 @@
+version: '3'
+services:
+    workspace-essentials.mongo:
+        container_name: workspace-essentials.mongo
+        image: 'bitnami/mongodb:4.0'
+        restart: always
+        ports:
+            - '27018:27017'
+        environment:
+            - MONGODB_USERNAME=root
+            - MONGODB_PASSWORD=click123
+            - MONGODB_DATABASE=demo
+        volumes:
+            - workspace-essentials.mongo.data:/bitnami/ 
+    workspace-essentials.mysql:
+        container_name: workspace-essentials.mysql
+        image: 'mysql:8.0'
+        command: '--default-authentication-plugin=mysql_native_password'
+        restart: always
+        environment:
+            - MYSQL_ROOT_PASSWORD=click123
+            - MYSQL_DATABASE=demo
+        ports:
+            - '3305:3306'
+        volumes:
+            - ./mysqldb:/var/lib/mysql
+    workspace-essentials.redis:
+        container_name: workspace-essentials.redis
+        image: 'redis:5.0-alpine'
+        restart: always
+        environment:
+            - ALLOW_EMPTY_PASSWORD=yes
+        ports:
+            - '6378:6379'
+        volumes:
+            - ./redisdb:/data
+    workspace-essentials.postgres:
+        container_name: workspace-essentials.postgres
+        user: 'root'
+        image: 'postgres:11.4-alpine'
+        restart: always
+        environment:
+            - POSTGRES_PASSWORD=click123
+            - POSTGRES_USER=root
+        ports:
+            - '5432:5432'
+        volumes:
+            - ./postgresqldb:/var/lib/postgresql
+volumes:
+    workspace-essentials.mongo.data:
+        external: true
