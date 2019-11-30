@@ -5,13 +5,13 @@ services:
         image: 'bitnami/mongodb:4.0'
         restart: always
         ports:
-            - '27018:27017'
+            - '27017:27017'
         environment:
             - MONGODB_USERNAME=root
             - MONGODB_PASSWORD=click123
             - MONGODB_DATABASE=demo
         volumes:
-            - workspace-essentials.mongo.data:/bitnami/ 
+            - ./mongodb:/bitnami/ 
     workspace-essentials.mysql:
         container_name: workspace-essentials.mysql
         image: 'mysql:8.0'
@@ -21,9 +21,21 @@ services:
             - MYSQL_ROOT_PASSWORD=click123
             - MYSQL_DATABASE=demo
         ports:
-            - '3305:3306'
+            - '3306:3306'
         volumes:
             - ./mysqldb:/var/lib/mysql
+    workspace-essentials.mysql.5:
+        container_name: workspace-essentials.mysql.5
+        image: 'mysql:5.7'
+        command: '--default-authentication-plugin=mysql_native_password'
+        restart: always
+        environment:
+            - MYSQL_ROOT_PASSWORD=click123
+            - MYSQL_DATABASE=demo
+        ports:
+            - '3307:3306'
+        volumes:
+            - ./mysql5db:/var/lib/mysql
     workspace-essentials.redis:
         container_name: workspace-essentials.redis
         image: 'redis:5.0-alpine'
@@ -31,7 +43,7 @@ services:
         environment:
             - ALLOW_EMPTY_PASSWORD=yes
         ports:
-            - '6378:6379'
+            - '6379:6379'
         volumes:
             - ./redisdb:/data
     workspace-essentials.postgres:
@@ -46,6 +58,14 @@ services:
             - '5432:5432'
         volumes:
             - ./postgresqldb:/var/lib/postgresql
-volumes:
-    workspace-essentials.mongo.data:
-        external: true
+    workspace-essentials.nginx:
+        container_name: workspace-essentials.nginx
+        user: 'root'
+        image: 'nginx'
+        restart: always
+        ports:
+            - '80:80'
+        volumes:
+            - ./nginx/sites.conf:/etc/nginx/sites-enabled/sites.conf
+            - ./nginx/www:/var/www/html
+            - ./nginx/www:/usr/share/nginx/html
