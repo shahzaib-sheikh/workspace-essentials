@@ -85,9 +85,7 @@ services:
   workspace-essentials.rabbitmq:
     container_name: workspace-essentials.rabbitmq
     user: "root"
-    image: "bitnami/rabbitmq:latest"
+    image: "rabbitmq:latest"
     restart: always
     ports:
       - "5672:5672"
-    volumes:
-      - ./rabbitmq:/bitnami
