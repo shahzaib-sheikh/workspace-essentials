@@ -58,7 +58,7 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - ./postgresqldb:/var/lib/postgresql
+      - ./postgresqldb:/var/lib/postgresql/data
   workspace-essentials.nginx:
     container_name: workspace-essentials.nginx
     user: "root"
