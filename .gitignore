@@ -65,5 +65,8 @@ typings/
 /mysqldb
 /postgresqldb
 /postresqldb
+/rabbitmq
+/elasticsearchdb
 /redisdb
 /.DS_Store
+/nginx/www/*

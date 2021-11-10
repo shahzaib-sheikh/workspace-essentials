@@ -1,72 +1,93 @@
-version: '3'
+version: "3"
 services:
-    workspace-essentials.mongo:
-        container_name: workspace-essentials.mongo
-        image: 'bitnami/mongodb:4.0'
-        restart: always
-        ports:
-            - '27017:27017'
-        environment:
-            - MONGODB_USERNAME=root
-            - MONGODB_PASSWORD=click123
-            - MONGODB_DATABASE=demo
-        volumes:
-            - ./mongodb:/bitnami/ 
-    workspace-essentials.mysql:
-        container_name: workspace-essentials.mysql
-        image: 'mysql:8.0'
-        command: '--default-authentication-plugin=mysql_native_password'
-        restart: always
-        environment:
-            - MYSQL_ROOT_PASSWORD=click123
-            - MYSQL_DATABASE=demo
-        ports:
-            - '3306:3306'
-        volumes:
-            - ./mysqldb:/var/lib/mysql
-    workspace-essentials.mysql.5:
-        container_name: workspace-essentials.mysql.5
-        image: 'mysql:5.7'
-        command: '--default-authentication-plugin=mysql_native_password'
-        restart: always
-        environment:
-            - MYSQL_ROOT_PASSWORD=click123
-            - MYSQL_DATABASE=demo
-        ports:
-            - '3307:3306'
-        volumes:
-            - ./mysql5db:/var/lib/mysql
-    workspace-essentials.redis:
-        container_name: workspace-essentials.redis
-        image: 'redis:5.0-alpine'
-        restart: always
-        environment:
-            - ALLOW_EMPTY_PASSWORD=yes
-        ports:
-            - '6379:6379'
-        volumes:
-            - ./redisdb:/data
-    workspace-essentials.postgres:
-        container_name: workspace-essentials.postgres
-        user: 'root'
-        image: 'postgres:11.4-alpine'
-        restart: always
-        environment:
-            - POSTGRES_PASSWORD=click123
-            - POSTGRES_USER=root
-        ports:
-            - '5432:5432'
-        volumes:
-            - ./postgresqldb:/var/lib/postgresql
-    workspace-essentials.nginx:
-        container_name: workspace-essentials.nginx
-        user: 'root'
-        image: 'nginx'
-        restart: always
-        ports: 
-            - "80:80"
-        volumes:
-            - ./nginx/sites.conf:/etc/nginx/conf.d/sites.conf
-            - ./nginx/nginx.conf:/etc/nginx/nginx.conf
-            - ./nginx/www:/var/www/html
-            - ./nginx/www:/usr/share/nginx/html
+  workspace-essentials.mongo:
+    container_name: workspace-essentials.mongo
+    image: "bitnami/mongodb:4.0"
+    restart: always
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGODB_USERNAME=admin
+      - MONGODB_PASSWORD=click123
+      - MONGODB_ROOT_PASSWORD=click123
+      - MONGODB_DATABASE=demo
+    volumes:
+      - ./mongodb:/bitnami/
+  workspace-essentials.mysql:
+    container_name: workspace-essentials.mysql
+    image: "mysql:8.0"
+    command: "--default-authentication-plugin=mysql_native_password"
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=click123
+      - MYSQL_DATABASE=demo
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./mysqldb:/var/lib/mysql
+  workspace-essentials.mysql.5:
+    container_name: workspace-essentials.mysql.5
+    image: "mysql:5.7"
+    command: "--default-authentication-plugin=mysql_native_password"
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=click123
+      - MYSQL_DATABASE=demo
+    ports:
+      - "3307:3306"
+    volumes:
+      - ./mysql5db:/var/lib/mysql
+  workspace-essentials.redis:
+    container_name: workspace-essentials.redis
+    image: "redis:5.0-alpine"
+    restart: always
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./redisdb:/data
+  workspace-essentials.postgres:
+    container_name: workspace-essentials.postgres
+    user: "root"
+    image: "postgres:11.4-alpine"
+    restart: always
+    environment:
+      - POSTGRES_PASSWORD=click123
+      - POSTGRES_USER=root
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./postgresqldb:/var/lib/postgresql
+  workspace-essentials.nginx:
+    container_name: workspace-essentials.nginx
+    user: "root"
+    image: "nginx"
+    restart: always
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/sites.conf:/etc/nginx/conf.d/sites.conf
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/www:/var/www/html
+      - ./nginx/www:/usr/share/nginx/html
+  workspace-essentials.elastic-search:
+    container_name: workspace-essentials.elastic-search
+    user: "root"
+    image: "docker.elastic.co/elasticsearch/elasticsearch:7.9.1"
+    restart: always
+    ports:
+      - "9200:9200"
+    volumes:
+      - ./elasticsearchdb:/usr/share/elasticsearch/data
+    environment:
+      - discovery.type=single-node
+  workspace-essentials.rabbitmq:
+    container_name: workspace-essentials.rabbitmq
+    user: "root"
+    image: "bitnami/rabbitmq:latest"
+    restart: always
+    ports:
+      - "5672:5672"
+    volumes:
+      - ./rabbitmq:/bitnami
