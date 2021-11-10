@@ -87,5 +87,7 @@ services:
     user: "root"
     image: "rabbitmq:latest"
     restart: always
+    volumes:
+      - ./rabbitmq:/var/lib/rabbitmq/mnesia/
     ports:
       - "5672:5672"
