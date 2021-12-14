@@ -91,3 +91,20 @@ services:
       - ./rabbitmq:/var/lib/rabbitmq/mnesia/
     ports:
       - "5672:5672"
+  workspace-essentials.influxdb:
+    container_name: workspace-essentials.influxdb
+    user: "root"
+    image: "influxdb:2.1.1"
+    restart: always
+    environment:
+      - DOCKER_INFLUXDB_INIT_MODE=setup
+      - DOCKER_INFLUXDB_INIT_USERNAME=root
+      - DOCKER_INFLUXDB_INIT_PASSWORD=click123
+      - DOCKER_INFLUXDB_INIT_ORG=root
+      - DOCKER_INFLUXDB_INIT_BUCKET=test
+      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=root
+    volumes:
+      - ./influxdb/data:/var/lib/influxdb2
+      - ./influxdb/config:/etc/influxdb2
+    ports:
+      - "8086:8086"
