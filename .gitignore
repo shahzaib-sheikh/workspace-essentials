@@ -70,3 +70,9 @@ typings/
 /redisdb
 /.DS_Store
 /nginx/www/*
+/elasticsearchdb
+/influxdb
+/mongodb
+/mysql5db
+/mysqldb
+/redisdb
