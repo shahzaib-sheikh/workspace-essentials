@@ -1,6 +1,7 @@
 version: "3"
 services:
   workspace-essentials.mongo:
+    # platform: linux/x86_64                           # for apple silicon
     container_name: workspace-essentials.mongo
     image: "bitnami/mongodb:4.0"
     restart: always
@@ -14,6 +15,7 @@ services:
     volumes:
       - ./mongodb:/bitnami/
   workspace-essentials.mysql:
+    # platform: linux/x86_64                           # for apple silicon
     container_name: workspace-essentials.mysql
     image: "mysql:8.0"
     command: "--default-authentication-plugin=mysql_native_password"
@@ -26,6 +28,7 @@ services:
     volumes:
       - ./mysqldb:/var/lib/mysql
   workspace-essentials.mysql.5:
+    # platform: linux/x86_64                           # for apple silicon
     container_name: workspace-essentials.mysql.5
     image: "mysql:5.7"
     command: "--default-authentication-plugin=mysql_native_password"
@@ -38,6 +41,7 @@ services:
     volumes:
       - ./mysql5db:/var/lib/mysql
   workspace-essentials.redis:
+    # platform: linux/x86_64                           # for apple silicon
     container_name: workspace-essentials.redis
     image: "redis:5.0-alpine"
     restart: always
@@ -48,6 +52,7 @@ services:
     volumes:
       - ./redisdb:/data
   workspace-essentials.postgres:
+    # platform: linux/x86_64                           # for apple silicon
     container_name: workspace-essentials.postgres
     user: "root"
     image: "postgres:11.4-alpine"
@@ -60,6 +65,7 @@ services:
     volumes:
       - ./postgresqldb:/var/lib/postgresql/data
   workspace-essentials.nginx:
+    # platform: linux/x86_64                           # for apple silicon
     container_name: workspace-essentials.nginx
     user: "root"
     image: "nginx"
@@ -72,6 +78,7 @@ services:
       - ./nginx/www:/var/www/html
       - ./nginx/www:/usr/share/nginx/html
   workspace-essentials.elastic-search:
+    # platform: linux/x86_64                          # for apple silicon
     container_name: workspace-essentials.elastic-search
     user: "root"
     image: "docker.elastic.co/elasticsearch/elasticsearch:7.9.1"
@@ -83,6 +90,7 @@ services:
     environment:
       - discovery.type=single-node
   workspace-essentials.rabbitmq:
+    # platform: linux/x86_64                          # for apple silicon
     container_name: workspace-essentials.rabbitmq
     user: "root"
     image: "rabbitmq:latest"
@@ -92,6 +100,7 @@ services:
     ports:
       - "5672:5672"
   workspace-essentials.influxdb:
+    # platform: linux/x86_64                            # for apple silicon
     container_name: workspace-essentials.influxdb
     user: "root"
     image: "influxdb:2.1.1"
@@ -108,3 +117,99 @@ services:
       - ./influxdb/config:/etc/influxdb2
     ports:
       - "8086:8086"
+  workspace-essentials.zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    container_name: zookeeper
+    hostname: zookeeper
+    ports:
+      - "22181:2181"
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+      - ZOOKEEPER_CLIENT_PORT=2181
+  workspace-essentials.kafka-broker1:
+    image: confluentinc/cp-kafka:latest
+    container_name: kafka-broker1
+    hostname: kafka-broker1
+    ports:
+      - "9091:9091"
+      - "19091:19091"
+      - "29091:29091"
+    environment:
+      KAFKA_LISTENERS: LISTENER_DOCKER_INTERNAL://kafka-broker1:19091,LISTENER_DOCKER_EXTERNAL://kafka-broker1:9091,LISTENER_LOCAL://kafka-broker1:29091
+      KAFKA_ADVERTISED_LISTENERS: LISTENER_DOCKER_INTERNAL://kafka-broker1:19091,LISTENER_DOCKER_EXTERNAL://${DOCKER_HOST_IP:-127.0.0.1}:9091,LISTENER_LOCAL://localhost:29091
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: LISTENER_DOCKER_INTERNAL:PLAINTEXT,LISTENER_DOCKER_EXTERNAL:PLAINTEXT,LISTENER_LOCAL:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: LISTENER_DOCKER_INTERNAL
+      KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
+      KAFKA_BROKER_ID: 1
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
+    depends_on:
+      - workspace-essentials.zookeeper
+  workspace-essentials.kafka-broker2:
+    image: confluentinc/cp-kafka:latest
+    container_name: kafka-broker2
+    hostname: kafka-broker2
+    ports:
+      - "9092:9092"
+      - "19092:19092"
+      - "29092:29092"
+    environment:
+      KAFKA_LISTENERS: LISTENER_DOCKER_INTERNAL://kafka-broker2:19092,LISTENER_DOCKER_EXTERNAL://kafka-broker2:9092,LISTENER_LOCAL://kafka-broker2:29092
+      KAFKA_ADVERTISED_LISTENERS: LISTENER_DOCKER_INTERNAL://kafka-broker2:19092,LISTENER_DOCKER_EXTERNAL://${DOCKER_HOST_IP:-127.0.0.1}:9092,LISTENER_LOCAL://localhost:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: LISTENER_DOCKER_INTERNAL:PLAINTEXT,LISTENER_DOCKER_EXTERNAL:PLAINTEXT,LISTENER_LOCAL:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: LISTENER_DOCKER_INTERNAL
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_BROKER_ID: 2
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
+    depends_on:
+      - workspace-essentials.zookeeper
+  workspace-essentials.kafka-broker3:
+    image: confluentinc/cp-kafka:latest
+    container_name: kafka-broker3
+    hostname: kafka-broker3
+    ports:
+      - "9093:9093"
+      - "19093:19093"
+      - "29093:29093"
+    environment:
+      KAFKA_LISTENERS: LISTENER_DOCKER_INTERNAL://kafka-broker3:19093,LISTENER_DOCKER_EXTERNAL://kafka-broker3:9093,LISTENER_LOCAL://kafka-broker3:29093
+      KAFKA_ADVERTISED_LISTENERS: LISTENER_DOCKER_INTERNAL://kafka-broker3:19093,LISTENER_DOCKER_EXTERNAL://${DOCKER_HOST_IP:-127.0.0.1}:9093,LISTENER_LOCAL://localhost:29093
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: LISTENER_DOCKER_INTERNAL:PLAINTEXT,LISTENER_DOCKER_EXTERNAL:PLAINTEXT,LISTENER_LOCAL:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: LISTENER_DOCKER_INTERNAL
+      KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
+      KAFKA_BROKER_ID: 3
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
+    depends_on:
+      - workspace-essentials.zookeeper
+  # workspace-essentials.create-topics:
+  #   image: confluentinc/cp-kafka:latest
+  #   depends_on:
+  #     - "kafka-broker1"
+  #     - "kafka-broker2"
+  #     - "kafka-broker3"
+  #   entrypoint: ["/bin/sh", "-c"]
+  #   command: |
+  #     "
+  #     # blocks until kafka is reachable
+  #     kafka-topics --bootstrap-server kafka-broker1:19091 --list
+
+  #     echo -e 'Creating kafka topics'
+  #     kafka-topics --bootstrap-server kafka-broker1:19091 --create --if-not-exists --topic topic-1 --replication-factor 3 --partitions 3
+  #     kafka-topics --bootstrap-server kafka-broker1:19091 --create --if-not-exists --topic topic-2 --replication-factor 3 --partitions 3
+  #     kafka-topics --bootstrap-server kafka-broker1:19091 --create --if-not-exists --topic topic-3 --replication-factor 3 --partitions 3
+
+  #     echo -e 'Successfully created the following topics:'
+  #     kafka-topics --bootstrap-server kafka-broker1:19091 --list
+  #     "
+  workspace-essentials.kafdrop:
+    image: obsidiandynamics/kafdrop
+    restart: "no"
+    ports:
+      - "9000:9000"
+    environment:
+      KAFKA_BROKERCONNECT: "kafka-broker1:19091"
+      JVM_OPTS: "-Xms16M -Xmx48M -Xss180K -XX:-TieredCompilation
+        -XX:+UseStringDeduplication -noverify"
+    depends_on:
+      - "workspace-essentials.kafka-broker1"
+      - "workspace-essentials.kafka-broker2"
+      - "workspace-essentials.kafka-broker3"
